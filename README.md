@@ -1,4 +1,4 @@
-# WolfCore — Anime Shop Simulator
+# WolfCore — ядро модов для Anime Shop Simulator
 
 ![Anime Shop Simulator](https://img.shields.io/badge/Anime%20Shop%20Simulator-1.0.6-f6a800)
 ![WolfCore](https://img.shields.io/badge/WolfCore-0.2.5-1685d1)
@@ -6,7 +6,7 @@
 ![Platform](https://img.shields.io/badge/Windows-x64-2672ec)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
 
-**WolfCore** — обязательное ядро и единое меню настроек для модов WolfMods в **Anime Shop Simulator**.
+**WolfCore** — служебный мод, обязательное ядро и единое меню настроек для модов WolfMods в **Anime Shop Simulator**. Работает через **MelonLoader** и используется другими модами серии как общая зависимость.
 
 Само ядро не меняет баланс, товары или игровые сохранения. Оно добавляет общую панель `Esc` → `Моды`, хранит настройки установленных модулей и подключает их страницы к игровому терминалу.
 
