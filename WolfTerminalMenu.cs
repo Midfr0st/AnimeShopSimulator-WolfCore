@@ -61,6 +61,7 @@ internal static class WolfTerminalMenuController
     private static UnityAction? _backAction;
     private static WolfTerminalPageRegistration? _activePage;
     private static bool _backRewired;
+    private static int _originalBackSiblingIndex;
     private static bool _closeRequested;
     private static bool _registryDirty = true;
     private static float _nextDiscoveryTime;
@@ -134,7 +135,9 @@ internal static class WolfTerminalMenuController
         if (_registryDirty)
             SynchronizeTiles();
 
-        if (_menuObject == null || !_menuObject.activeInHierarchy)
+        var maximumPage = Math.Max(0, (NativeTileCount + WolfModRegistry.GetTerminalSlots().Count - 4) / Columns);
+        UpdatePageButton(maximumPage);
+        if (!IsMainMenuVisible())
             return;
 
         TickPageNavigation();
@@ -167,7 +170,7 @@ internal static class WolfTerminalMenuController
 
             ResetCurrentView();
             _view = target;
-            _menuObject = target._ordersButton.transform.parent?.gameObject;
+            _menuObject = target._menu ?? target._ordersButton.transform.parent?.gameObject;
             CaptureNativeLayout();
             _registryDirty = true;
             SynchronizeTiles();
@@ -275,6 +278,21 @@ internal static class WolfTerminalMenuController
         clone.hideFlags = HideFlags.DontSave;
         clone.SetActive(false);
 
+        // 1.0.7 tiles include localization and locked / hover overlays.
+        // A mod tile owns its caption and has no native employee restrictions.
+        foreach (var behaviour in clone.GetComponentsInChildren<MonoBehaviour>(true))
+        {
+            if (behaviour.GetIl2CppType().Name == "Localize")
+                behaviour.enabled = false;
+        }
+        for (var index = 0; index < clone.transform.childCount; index++)
+        {
+            var child = clone.transform.GetChild(index);
+            if (child.name.StartsWith("Hand", StringComparison.Ordinal) ||
+                child.name.StartsWith("InFullVersion", StringComparison.Ordinal))
+                child.gameObject.SetActive(false);
+        }
+
         var button = clone.GetComponent<Button>() ??
                      throw new InvalidOperationException("штатная плитка не содержит Button");
         var action = DelegateSupport.ConvertDelegate<UnityAction>(
@@ -287,7 +305,10 @@ internal static class WolfTerminalMenuController
 
         var label = clone.GetComponentInChildren<TextMeshProUGUI>(true);
         if (label != null)
+        {
             label.text = registration.Label;
+            label.raycastTarget = false;
+        }
 
         var texture = new Texture2D(2, 2, TextureFormat.RGBA32, false)
         {
@@ -307,16 +328,34 @@ internal static class WolfTerminalMenuController
             new Vector2(0.5f, 0.5f), 100f);
         sprite.name = "WolfMenu_TerminalSprite_" + registration.TileId;
         sprite.hideFlags = HideFlags.DontSave;
-        var image = button.image ?? clone.GetComponent<Image>();
+        // Preserve the native rounded border and caption strip. The artwork now
+        // lives beside the caption strip, two levels inside the button.
+        Image? image = null;
+        var captionPanel = label?.transform.parent;
+        var artworkParent = captionPanel?.parent;
+        if (artworkParent != null)
+        {
+            for (var index = 0; index < artworkParent.childCount; index++)
+            {
+                var child = artworkParent.GetChild(index);
+                var candidate = child.GetComponent<Image>();
+                if (candidate != null && child.GetInstanceID() != captionPanel!.GetInstanceID())
+                {
+                    image = candidate;
+                    break;
+                }
+            }
+        }
+        image ??= button.image ?? clone.GetComponent<Image>();
         if (image != null)
         {
             image.sprite = sprite;
             image.color = Color.white;
             image.preserveAspect = false;
-            image.raycastTarget = true;
-            button.image = image;
-            button.targetGraphic = image;
+            image.raycastTarget = image.gameObject.GetInstanceID() == clone.GetInstanceID();
         }
+        foreach (var graphic in clone.GetComponentsInChildren<Graphic>(true))
+            graphic.raycastTarget = graphic.gameObject.GetInstanceID() == clone.GetInstanceID();
 
         CopyRect(_view._employeeButton.GetComponent<RectTransform>(), clone.GetComponent<RectTransform>());
         clone.transform.SetAsLastSibling();
@@ -430,7 +469,9 @@ internal static class WolfTerminalMenuController
             rect.localRotation = Quaternion.identity;
         }
         var image = root.GetComponent<Image>();
-        image.color = new Color(0.20f, 0.22f, 0.36f, 0.94f);
+        image.sprite = _view._closeButton?.image?.sprite;
+        image.type = Image.Type.Sliced;
+        image.color = new Color(0.96f, 0.96f, 1f, 1f);
         image.raycastTarget = true;
         var button = root.GetComponent<Button>();
         _pageButtonAction ??= DelegateSupport.ConvertDelegate<UnityAction>(new Action(NextPage));
@@ -456,7 +497,7 @@ internal static class WolfTerminalMenuController
         label.fontSize = 26f;
         label.fontStyle = FontStyles.Bold;
         label.alignment = TextAlignmentOptions.Center;
-        label.color = Color.white;
+        label.color = new Color(0.27f, 0.25f, 0.68f, 1f);
         label.raycastTarget = false;
         _pageButtonObject = root;
         _pageButtonLabel = label;
@@ -467,10 +508,14 @@ internal static class WolfTerminalMenuController
     {
         if (_pageButtonObject == null || _pageButtonLabel == null)
             return;
-        var visible = maximumPage > 0 && _menuObject != null && _menuObject.activeInHierarchy;
+        var visible = maximumPage > 0 && IsMainMenuVisible();
         _pageButtonLabel.text = $"‹  ЭКРАН {_page + 1} / {maximumPage + 1}  ›";
         _pageButtonObject.SetActive(visible);
     }
+
+    private static bool IsMainMenuVisible() =>
+        _activePage == null && _menuObject != null && _menuObject.activeInHierarchy &&
+        _view?._closeButton != null && !_view._closeButton.gameObject.activeSelf;
 
     private static void TickPageNavigation()
     {
@@ -510,15 +555,15 @@ internal static class WolfTerminalMenuController
 
     private static void OpenRegisteredPage(string tileId)
     {
-        if (_view == null || _menuObject == null || !_menuObject.activeInHierarchy ||
+        if (_view == null || _menuObject == null || !IsMainMenuVisible() ||
             !RuntimeTiles.TryGetValue(tileId, out var runtime) ||
             !WolfModRegistry.IsEnabled(runtime.Registration.ModId))
             return;
         try
         {
             _pageButtonObject?.SetActive(false);
-            _menuObject.SetActive(false);
             _view.ShowSection(true);
+            _menuObject.SetActive(false);
             if (!runtime.Registration.OpenPage(_view))
             {
                 _view.ShowSection(false);
@@ -576,6 +621,8 @@ internal static class WolfTerminalMenuController
         if (_view?._closeButton == null || _backRewired)
             return;
         _originalBackEvent = _view._closeButton.onClick;
+        _originalBackSiblingIndex = _view._closeButton.transform.GetSiblingIndex();
+        _view._closeButton.transform.SetAsLastSibling();
         _backAction ??= DelegateSupport.ConvertDelegate<UnityAction>(new Action(() => _closeRequested = true));
         var replacement = new Button.ButtonClickedEvent();
         replacement.AddListener(_backAction);
@@ -589,8 +636,12 @@ internal static class WolfTerminalMenuController
             return;
         try
         {
-            if (_view?._closeButton != null && _originalBackEvent != null)
-                _view._closeButton.onClick = _originalBackEvent;
+            if (_view?._closeButton != null)
+            {
+                if (_originalBackEvent != null)
+                    _view._closeButton.onClick = _originalBackEvent;
+                _view._closeButton.transform.SetSiblingIndex(_originalBackSiblingIndex);
+            }
         }
         catch { }
         _originalBackEvent = null;

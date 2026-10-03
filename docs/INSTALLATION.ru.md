@@ -28,7 +28,7 @@
 ## 3. Установите WolfCore
 
 1. Откройте [последний выпуск WolfCore](https://github.com/Midfr0st/AnimeShopSimulator-WolfCore/releases/latest).
-2. Скачайте `WolfCore.dll` или архив `WolfCore-0.2.5.zip`.
+2. Скачайте `WolfCore.dll` или архив `WolfCore-0.2.6.zip`.
 3. Скопируйте `WolfCore.dll` непосредственно в папку `Anime Shop Simulator\Mods`.
 
 ```text

@@ -1,7 +1,7 @@
 # WolfCore — ядро модов для Anime Shop Simulator
 
-![Anime Shop Simulator](https://img.shields.io/badge/Anime%20Shop%20Simulator-1.0.6-f6a800)
-![WolfCore](https://img.shields.io/badge/WolfCore-0.2.5-1685d1)
+![Anime Shop Simulator](https://img.shields.io/badge/Anime%20Shop%20Simulator-1.0.7-f6a800)
+![WolfCore](https://img.shields.io/badge/WolfCore-0.2.6-1685d1)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3-7952b3)
 ![Platform](https://img.shields.io/badge/Windows-x64-2672ec)
 ![License](https://img.shields.io/badge/license-MIT-2ea44f)
@@ -15,6 +15,8 @@
 Готовая сборка находится в разделе **[Releases](https://github.com/Midfr0st/AnimeShopSimulator-WolfCore/releases/latest)**.
 
 Для обычной установки нужен только `WolfCore.dll`. Исходный код скачивать и собирать самостоятельно не требуется.
+
+Описание исправлений: [история изменений](CHANGELOG.md).
 
 ## Возможности
 
@@ -57,11 +59,11 @@
 
 | Компонент | Поддерживаемая версия |
 | --- | --- |
-| Anime Shop Simulator | `1.0.6` |
+| Anime Shop Simulator | `1.0.7` |
 | MelonLoader | `0.7.3` |
 | Платформа | Windows x64 |
 | Сборка игры | Unity IL2CPP |
-| WolfCore | `0.2.5` |
+| WolfCore | `0.2.6` |
 
 После обновлений игры совместимость может потребовать повторной проверки.
 

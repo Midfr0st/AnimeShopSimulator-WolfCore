@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.UI;
 
-[assembly: MelonInfo(typeof(WolfCore.WolfCoreMod), "WolfCore", "0.2.5", "WolfMods")]
+[assembly: MelonInfo(typeof(WolfCore.WolfCoreMod), "WolfCore", "0.2.6", "WolfMods")]
 
 namespace WolfCore;
 
@@ -340,11 +340,11 @@ public sealed class WolfCoreMod : MelonMod
         WolfModRegistry.Register(new WolfModRegistration(
             "wolfmods.core",
             "WolfCore",
-            "0.2.5",
+            "0.2.6",
             "Общее меню и ядро для набора модов WolfMods.",
             systemMod: true));
         PauseMenuPatches.Install();
-        LoggerInstance.Msg("WolfCore 0.2.5 загружен. Меню модов и реестр терминальных вкладок готовы.");
+        LoggerInstance.Msg("WolfCore 0.2.6 загружен. Меню модов и реестр терминальных вкладок готовы.");
     }
 
     public override void OnUpdate()
