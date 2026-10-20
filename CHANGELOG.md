@@ -1,5 +1,11 @@
 # История изменений
 
+## Проверка на игре 1.0.74 — 2026-10-20
+
+Версия 0.2.6 сохранена; код и DLL не изменились. Проверены сборка на библиотеках 1.0.74, загрузка ядра и разрешение прямых обращений к игровому API.
+
+Обновлены README и сведения в выпуске. Для совместного использования с фильтрами полок требуется [0.10.5](https://github.com/Midfr0st/AnimeShopSimulator-ShelfFilters/releases/tag/v0.10.5). [Результаты общей проверки](https://github.com/Midfr0st/AnimeShopSimulator-WolfCore/blob/main/docs/COMPATIBILITY-1.0.74.ru.md).
+
 ## 0.2.6 — 2026-10-03
 
 Совместимость с Anime Shop Simulator 1.0.7.

@@ -1,6 +1,6 @@
 # WolfCore — ядро модов для Anime Shop Simulator
 
-![Anime Shop Simulator](https://img.shields.io/badge/Anime%20Shop%20Simulator-1.0.7-f6a800)
+![Anime Shop Simulator](https://img.shields.io/badge/Anime%20Shop%20Simulator-1.0.74-f6a800)
 ![WolfCore](https://img.shields.io/badge/WolfCore-0.2.6-1685d1)
 ![MelonLoader](https://img.shields.io/badge/MelonLoader-0.7.3-7952b3)
 ![Platform](https://img.shields.io/badge/Windows-x64-2672ec)
@@ -59,7 +59,7 @@
 
 | Компонент | Поддерживаемая версия |
 | --- | --- |
-| Anime Shop Simulator | `1.0.7` |
+| Anime Shop Simulator | `1.0.74` |
 | MelonLoader | `0.7.3` |
 | Платформа | Windows x64 |
 | Сборка игры | Unity IL2CPP |
@@ -74,6 +74,14 @@ Anime Shop Simulator\UserData\WolfCore.settings.json
 ```
 
 Удаление этого файла сбросит настройки WolfCore, но не затронет игровое сохранение.
+
+## Проверка на игре 1.0.74 — 20 октября 2026
+
+Версия **0.2.6** не потребовала изменений кода или замены DLL для 1.0.74. Проверены сборка на библиотеках 1.0.74, загрузка ядра и разрешение прямых обращений к игровому API.
+
+Если установлены фильтры полок, обновите их до [0.10.5](https://github.com/Midfr0st/AnimeShopSimulator-ShelfFilters/releases/tag/v0.10.5): исправлены бездействие выкладчиков и сброс пустых коробок возле мусорки.
+
+Подробнее: [результаты и границы проверки всех пяти компонентов](https://github.com/Midfr0st/AnimeShopSimulator-WolfCore/blob/main/docs/COMPATIBILITY-1.0.74.ru.md).
 
 ## Если что-то не работает
 
